@@ -1,0 +1,1 @@
+export const SAVE_LOGS = 'SAVE_LOGS';
