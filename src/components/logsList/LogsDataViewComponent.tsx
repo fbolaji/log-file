@@ -19,31 +19,39 @@ export const LogsDataViewComponent = (props: IProps) => {
         text: '#'
     }, {
         dataField: 'date',
-        text: 'dateTime'
+        text: 'DateTime',
+
     }, {
         dataField: 'severity',
-        text: 'severity'
+        text: 'Severity'
     }, {
         dataField: 'message',
-        text: 'message'
+        text: 'Message'
     }];
     const { list } = props;
     const options = {
-        onSizePerPageChange: (sizePerPage: number, page: number) => {
-            console.log('Size per page change!!!');
-            console.log('Newest size per page:' + sizePerPage);
-            console.log('Newest page:' + page);
-        },
-        onPageChange: (page: number, sizePerPage: number) => {
-            console.log('Page change!!!');
-            console.log('Newest size per page:' + sizePerPage);
-            console.log('Newest page:' + page);
+        sizePerPage: 5,
+        hideSizePerPage: true,
+        hidePageListOnlyOnePage: true
+    };
+
+    const rowStyle = (row: any, rowIndex: any) => {
+        row.index = rowIndex;
+        const style: any = {};
+        if (rowIndex % 2 === 0) {
+            style.backgroundColor = '#343a40';
+        } else {
+            style.backgroundColor = '#212529';
+
         }
+        style.borderTop = 'none';
+        style.color = '#ccc';
+
+        return style;
     };
 
     // @ts-ignore
     return (
-
         <BootstrapTable
             striped
             bordered
@@ -51,6 +59,8 @@ export const LogsDataViewComponent = (props: IProps) => {
             keyField='id'
             data={ list }
             columns={ columns }
+            classes="logsTable"
+            rowStyle={rowStyle}
             pagination={ paginationFactory(options) }
         />
     )

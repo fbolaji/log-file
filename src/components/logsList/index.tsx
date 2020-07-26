@@ -1,75 +1,66 @@
 import React, { useState, useEffect, Dispatch } from 'react';
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import socketIOClient from "socket.io-client";
 import _isEmpty from 'lodash/isEmpty';
-import {Chart} from "react-google-charts";
-import { AppState } from '../../redux/reducers/rootReducer';
+import { Chart } from "react-google-charts";
+import { Row, Col } from 'react-bootstrap';
+
+import './style.css';
+
+import withLoader from "../HOC/withLoader";
 import { saveLogs, ISetLogfileAction, apiEndpoint } from "../../redux/actions/logfile.action";
-
-import { Container, Row, Col } from 'react-bootstrap';
-
-import HeaderComponent from "../sharedComponents/header";
 import LogsDataViewComponent from "./LogsDataViewComponent";
 
+const RenderLogs = withLoader(LogsDataViewComponent);
+
 export const LogsListComponent = () => {
-    let socket = socketIOClient(apiEndpoint);
-    // const { logs } = useSelector((state: AppState) => state.logs);
     const logsDispatch = useDispatch<Dispatch<ISetLogfileAction>>();
     const [response, setResponse] = useState<object[]>([]);
-
-    // const fetchLogs: Function = () => {
-    //     logsDispatch(getLogs());
-    // }
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const severityLength = (type: string) => {
-        return response.filter(log => log.severity === type).length;
+        return response.filter((log: any) => log.severity === type).length;
     }
 
-    useEffect(() => {
-        const socket = socketIOClient(apiEndpoint);
-
+    useEffect((): any => {
+        let socket = socketIOClient(apiEndpoint);
         socket.on("FromAPI", (data: object) => {
             console.log(data);
+            setIsLoading(true);
             setResponse([...response, data]);
             logsDispatch(saveLogs(response));
-
-            return () => socket.disconnect();
+            setIsLoading(false);
         });
-    }, [response]);
+
+        return () => socket.disconnect();
+    }, [isLoading, response, logsDispatch]);
 
     return (
-        <Container fluid="md">
-        <Row>
-            <Col md={{ span: 12 }}>
-                <header>
-                    <HeaderComponent title="Assets Logs File" />
-                </header>
-            </Col>
-        </Row>
+        <>
           {_isEmpty(response) && <div>Oops! No data to view</div>}
-          {!_isEmpty(response) && <Row>
+          {!_isEmpty(response) && <Row className="mt-2">
                 <Col md={{ span: 7, order: 1 }} xs={{ span: 12, order: 2 }}>
-                    <LogsDataViewComponent list={response} />
+                    <RenderLogs loading={isLoading} list={response} />
                 </Col>
-                <Col  md={{ span: 4, order: 2 }} xs={{span: 12, order: 1 }}>
+                <Col  md={{ span: 5, order: 2 }} xs={{span: 12, order: 1 }}>
                     <aside>
                         <Chart
-                            width={400}
+                            width={350}
                             height={350}
                             chartType="PieChart"
                             loader={<div>Loading Chart</div>}
                             data={[
                                 ['Logs Severity', 'Date time per hour'],
                                 ['INFO', severityLength('INFO')],
-                                ['ERROR', severityLength('ERROR')],
                                 ['WARNING', severityLength('WARNING')],
+                                ['ERROR', severityLength('ERROR')],
                             ]}
                             options={{
-                                title: 'Logs File',
+                                title: 'Logs File statistics',
                                 pieHole: 0.4,
                             }}
                             rootProps={{
-                                'data-testid': '1',
+                                'data-testid': 'logStatistic',
                             }}
                         />
                     </aside>
@@ -77,7 +68,7 @@ export const LogsListComponent = () => {
                 </Col>
             </Row>
           }
-        </Container>
+        </>
     )
 };
 

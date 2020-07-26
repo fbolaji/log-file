@@ -20,7 +20,7 @@ io.on("connection", (socket) => {
 	if (interval) {
 		clearInterval(interval);
 	}
-	interval = setInterval(() => getApiAndEmit(socket), 2000);
+	interval = setInterval(() => getApiAndEmit(socket), 7000);
 	socket.on("disconnect", () => {
 		console.log("Client disconnected");
 		clearInterval(interval);
@@ -34,7 +34,7 @@ const getApiAndEmit = socket => {
 	const uuid = Math.floor(dataTime.getTime() + (Math.random() * 1000 /16));
 	const responseData = {
 		"id": uuid,
-		"datetime":  dataTime,
+		"date":  dataTime,
 		"severity": randomType,
 		"message": `Some ${randomType} message`
 	};

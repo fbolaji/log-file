@@ -1,4 +1,4 @@
-import React, { Component, PropsWithChildren} from "react";
+import React, { PropsWithChildren} from "react";
 
 type IProps = {
     loading: boolean;

@@ -6,7 +6,7 @@ interface headerProps {
 
 const HeaderComponent = ({ title = '' }: headerProps) => {
 	return (
-		<header>
+		<header className="mainTitle">
 			<h2>{title}</h2>
 		</header>
 	);
