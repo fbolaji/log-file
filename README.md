@@ -1,4 +1,4 @@
-![log-file](src/asset-screen-shot.png)
+![log-file](src/asset-screen-shot.PNG)
 ## Create User App 
 This is a simple React.js based web application to populate logs data from a node.js backend services.
 
