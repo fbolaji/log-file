@@ -1,5 +1,5 @@
 ![log-file](src/screenshot.png)
-## Create User App 
+## Logs Data App 
 This is a simple React.js based web application to populate logs data from a node.js backend services.
 
 ## Technical Note:
