@@ -36,8 +36,8 @@ export const LogsListComponent = () => {
     useEffect( (): any => {
         isSocketConnected()
 
-       // return () => socket.disconnect();
-    }, [isLoading, response, logsDispatch]);
+       return () => socket.disconnect();
+    }, [isLoading, response]);
 
     return (
         <>
