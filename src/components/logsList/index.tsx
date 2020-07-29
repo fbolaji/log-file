@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Dispatch } from 'react';
-import { useDispatch } from "react-redux";
+import { useDispatch, useStore } from "react-redux";
 import socketIOClient from "socket.io-client";
 import _isEmpty from 'lodash/isEmpty';
 import { Chart } from "react-google-charts";
@@ -14,92 +14,29 @@ import LogsDataViewComponent from "./LogsDataViewComponent";
 const RenderLogs = withLoader(LogsDataViewComponent);
 
 export const LogsListComponent = () => {
+    let socket = socketIOClient(apiEndpoint);
     const logsDispatch = useDispatch<Dispatch<ISetLogfileAction>>();
-    const [response, setResponse] = useState<object[]>([
-        {
-            id: 1595610796967,
-            datetime: '2020-07-24T17:13:16.909Z',
-            severity: 'INFO',
-            message: 'Some INFO message'
-        },
-        {
-            id: 1595610806034,
-            datetime: '2020-07-24T17:13:25.976Z',
-            severity: 'WARNING',
-            message: 'Some WARNING message'
-        },
-        {
-            id: 1595610815087,
-            datetime: '2020-07-24T17:13:35.054Z',
-            severity: 'INFO',
-            message: 'Some INFO message'
-        },
-        {
-            id: 1595610824112,
-            datetime: '2020-07-24T17:13:44.101Z',
-            severity: 'INFO',
-            message: 'Some INFO message'
-        },
-        {
-            id: 1595610833176,
-            datetime: '2020-07-24T17:13:53.153Z',
-            severity: 'WARNING',
-            message: 'Some WARNING message'
-        },
-        {
-            id: 1595610842236,
-            datetime: '2020-07-24T17:14:02.220Z',
-            severity: 'WARNING',
-            message: 'Some WARNING message'
-        },
-        {
-            id: 1595610851313,
-            datetime: '2020-07-24T17:14:11.266Z',
-            severity: 'ERROR',
-            message: 'Some ERROR message'
-        },
-        {
-            id: 1595610860351,
-            datetime: '2020-07-24T17:14:20.332Z',
-            severity: 'ERROR',
-            message: 'Some ERROR message'
-        },
-        {
-            id: 1595610869450,
-            datetime: '2020-07-24T17:14:29.397Z',
-            severity: 'INFO',
-            message: 'Some INFO message'
-        },
-        {
-            id: 1595610878453,
-            datetime: '2020-07-24T17:14:38.443Z',
-            severity: 'WARNING',
-            message: 'Some WARNING message'
-        },
-        {
-            id: 1595610887526,
-            datetime: '2020-07-24T17:14:47.500Z',
-            severity: 'ERROR',
-            message: 'Some ERROR message'
-        }
-    ]);
+    const [response, setResponse] = useState<object[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-
     const severityLength = (type: string) => {
         return response.filter((log: any) => log.severity === type).length;
     }
 
-    useEffect( (): any => {
-        let socket = socketIOClient(apiEndpoint);
-        socket.on("FromAPI", (data: object) => {
+    const isSocketConnected = () => {
+         socket.on("FromAPI", (data: object) => {
             console.log(data);
             setIsLoading(true);
             setResponse([...response, data]);
             logsDispatch(saveLogs(response));
             setIsLoading(false);
         });
+    };
 
-        return () => socket.disconnect();
+
+    useEffect( (): any => {
+        isSocketConnected()
+
+       // return () => socket.disconnect();
     }, [isLoading, response, logsDispatch]);
 
     return (

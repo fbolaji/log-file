@@ -1,14 +1,11 @@
-import { SAVE_LOGS } from "../types";
-import { Dispatch } from 'redux';
+import { SAVE_LOGS } from "../types";;
 
 export const apiEndpoint = `http://127.0.0.1:3001`;
 
 export const saveLogs: Function = (data: object[]) => {
-    return (dispatch: Dispatch) => {
-        dispatch({
-            type: SAVE_LOGS,
-            payload: data
-        });
+    return {
+        type: SAVE_LOGS,
+        payload: data
     };
 };
 
