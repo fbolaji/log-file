@@ -19,7 +19,7 @@ const LogFileReducer = (state: LogState = initialState, action: LogfileActions) 
         case 'SAVE_LOGS':
             return {
                 ...state,
-                logs: action?.payload || [],
+                logs: action.payload || [],
             }
         default:
             return state;
